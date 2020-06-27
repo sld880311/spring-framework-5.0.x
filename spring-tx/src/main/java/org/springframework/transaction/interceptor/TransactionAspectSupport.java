@@ -61,7 +61,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
- * @author StÃ©phane Nicoll
+ * @author StèŒ…phane Nicoll
  * @author Sam Brannen
  * @since 1.1
  * @see #setTransactionManager
@@ -70,13 +70,13 @@ import org.springframework.util.StringUtils;
  */
 /**'
  * 
- * »ñÈ¡ÊÂÎñµÄÊôĞÔ£¨@Transactional×¢½âÖĞµÄÅäÖÃ£©
- * ¼ÓÔØÅäÖÃÖĞµÄTransactionManager.
- * »ñÈ¡ÊÕ¼¯ÊÂÎñĞÅÏ¢TransactionInfo
- * Ö´ĞĞÄ¿±ê·½·¨
- * ³öÏÖÒì³££¬³¢ÊÔ´¦Àí¡£
- * ÇåÀíÊÂÎñÏà¹ØĞÅÏ¢
- * Ìá½»ÊÂÎñ
+ * è·å–äº‹åŠ¡çš„å±æ€§ï¼ˆ@Transactionalæ³¨è§£ä¸­çš„é…ç½®ï¼‰
+ * åŠ è½½é…ç½®ä¸­çš„TransactionManager.
+ * è·å–æ”¶é›†äº‹åŠ¡ä¿¡æ¯TransactionInfo
+ * æ‰§è¡Œç›®æ ‡æ–¹æ³•
+ * å‡ºç°å¼‚å¸¸ï¼Œå°è¯•å¤„ç†ã€‚
+ * æ¸…ç†äº‹åŠ¡ç›¸å…³ä¿¡æ¯
+ * æäº¤äº‹åŠ¡
  * @author Theodore SUN
  * @since 5.0
  */
@@ -291,19 +291,19 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			final InvocationCallback invocation) throws Throwable {
 
 		// If the transaction attribute is null, the method is non-transactional.
-		// 1.»ñÈ¡@Transactional×¢½âµÄÏà¹Ø²ÎÊı£¨¸ôÀë¼¶±ğ¡¢´«²¥ÊôĞÔ¡¢»Ø¹öÒì³£µÈ£©
+		// 1.è·å–@Transactionalæ³¨è§£çš„ç›¸å…³å‚æ•°ï¼ˆéš”ç¦»çº§åˆ«ã€ä¼ æ’­å±æ€§ã€å›æ»šå¼‚å¸¸ç­‰ï¼‰
 		TransactionAttributeSource tas = getTransactionAttributeSource();
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
-		// 2.»ñÈ¡ÊÂÎñ¹ÜÀíÆ÷£¨PlatformTransactionManager£©
+		// 2.è·å–äº‹åŠ¡ç®¡ç†å™¨ï¼ˆPlatformTransactionManagerï¼‰
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
 		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
 			/**
-			 * 3. »ñÈ¡TransactionInfo£¬°üº¬ÁËtmºÍTransactionStatus
-			 * ÉèÖÃÌá½»·½Ê½Îªfalse£ºcon.setAutoCommit(false)
-			 * ÉèÖÃÓëÊı¾İ¿âÁ¬½ÓÏà¹ØµÄThreadLocal±äÁ¿£ºtxInfo.bindToThread();
+			 * 3. è·å–TransactionInfoï¼ŒåŒ…å«äº†tmå’ŒTransactionStatus
+			 * è®¾ç½®æäº¤æ–¹å¼ä¸ºfalseï¼šcon.setAutoCommit(false)
+			 * è®¾ç½®ä¸æ•°æ®åº“è¿æ¥ç›¸å…³çš„ThreadLocalå˜é‡ï¼štxInfo.bindToThread();
 			 */
 			TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
 
@@ -311,20 +311,20 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			try {
 				// This is an around advice: Invoke the next interceptor in the chain.
 				// This will normally result in a target object being invoked.
-				// 4.Ö´ĞĞÄ¿±ê·½·¨
+				// 4.æ‰§è¡Œç›®æ ‡æ–¹æ³•
 				retVal = invocation.proceedWithInvocation();
 			}
 			catch (Throwable ex) {
 				// target invocation exception
-				// 5.»Ø¹ö
+				// 5.å›æ»š
 				completeTransactionAfterThrowing(txInfo, ex);
 				throw ex;
 			}
 			finally {
-				// 6. ÇåÀíµ±Ç°Ïß³ÌµÄÊÂÎñÏà¹ØĞÅÏ¢
+				// 6. æ¸…ç†å½“å‰çº¿ç¨‹çš„äº‹åŠ¡ç›¸å…³ä¿¡æ¯
 				cleanupTransactionInfo(txInfo);
 			}
-			// 7.Ìá½»ÊÂÎñ
+			// 7.æäº¤äº‹åŠ¡
 			commitTransactionAfterReturning(txInfo);
 			return retVal;
 		}
@@ -404,16 +404,16 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		}
 
 		String qualifier = txAttr.getQualifier();
-		// Èç¹ûÖ¸¶¨ÁËBeanÔòÈ¡Ö¸¶¨µÄPlatformTransactionManagerÀàĞÍµÄBean
+		// å¦‚æœæŒ‡å®šäº†Beanåˆ™å–æŒ‡å®šçš„PlatformTransactionManagerç±»å‹çš„Bean
 		if (StringUtils.hasText(qualifier)) {
 			return determineQualifiedTransactionManager(this.beanFactory, qualifier);
 		}
-		// Èç¹ûÖ¸¶¨ÁËBeanµÄÃû³Æ,Ôò¸ù¾İbeanÃû³Æ»ñÈ¡¶ÔÓ¦µÄbean
+		// å¦‚æœæŒ‡å®šäº†Beançš„åç§°,åˆ™æ ¹æ®beanåç§°è·å–å¯¹åº”çš„bean
 		else if (StringUtils.hasText(this.transactionManagerBeanName)) {
 			return determineQualifiedTransactionManager(this.beanFactory, this.transactionManagerBeanName);
 		}
 		else {
-			// Ä¬ÈÏÈ¡Ò»¸öPlatformTransactionManagerÀàĞÍµÄBean
+			// é»˜è®¤å–ä¸€ä¸ªPlatformTransactionManagerç±»å‹çš„Bean
 			PlatformTransactionManager defaultTransactionManager = getTransactionManager();
 			if (defaultTransactionManager == null) {
 				defaultTransactionManager = this.transactionManagerCache.get(DEFAULT_TRANSACTION_MANAGER_KEY);
@@ -480,6 +480,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	 * The {@code hasTransaction()} method on TransactionInfo can be used to
 	 * tell if there was a transaction created.
 	 * @see #getTransactionAttributeSource()
+	 * æ ¹æ®äº‹åŠ¡çš„ä¼ æ’­å±æ€§åšå‡ºä¸åŒçš„å¤„ç†ï¼Œæ ¸å¿ƒæ˜¯é€šè¿‡TransactionStatusæ¥åˆ¤æ–­äº‹åŠ¡çš„å±æ€§
 	 */
 	@SuppressWarnings("serial")
 	protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,
@@ -621,28 +622,28 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	/**
 	 * Opaque object used to hold transaction information. Subclasses
 	 * must pass it back to methods on this class, but not see its internals.
-	 * TransactionInfoÊÇ¶Ôµ±Ç°ÊÂÎñµÄÃèÊö£¬ÆäÖĞ¼ÇÂ¼ÁËÊÂÎñµÄ×´Ì¬µÈĞÅÏ¢¡£
-	 * Ëü¼ÇÂ¼ÁËºÍÒ»¸öÊÂÎñËùÓĞµÄÏà¹ØĞÅÏ¢¡£ËüÃ»ÓĞÊ²Ã´·½·¨£¬Ö»ÊÇ¶ÔÊÂÎñÏà¹Ø¶ÔÏóµÄÒ»¸ö×éºÏ¡£
-	 * ×î¹Ø¼üµÄ¶ÔÏóÊÇTransactionStatus£¬Ëü´ú±íµ±Ç°ÕıÔÚÔËĞĞµÄÊÇÄÄ¸öÊÂÎñ¡£
+	 * TransactionInfoæ˜¯å¯¹å½“å‰äº‹åŠ¡çš„æè¿°ï¼Œå…¶ä¸­è®°å½•äº†äº‹åŠ¡çš„çŠ¶æ€ç­‰ä¿¡æ¯ã€‚
+	 * å®ƒè®°å½•äº†å’Œä¸€ä¸ªäº‹åŠ¡æ‰€æœ‰çš„ç›¸å…³ä¿¡æ¯ã€‚å®ƒæ²¡æœ‰ä»€ä¹ˆæ–¹æ³•ï¼Œåªæ˜¯å¯¹äº‹åŠ¡ç›¸å…³å¯¹è±¡çš„ä¸€ä¸ªç»„åˆã€‚
+	 * æœ€å…³é”®çš„å¯¹è±¡æ˜¯TransactionStatusï¼Œå®ƒä»£è¡¨å½“å‰æ­£åœ¨è¿è¡Œçš„æ˜¯å“ªä¸ªäº‹åŠ¡ã€‚
 	 */
 	protected final class TransactionInfo {
 
-//		ÊÂÎñ¹ÜÀíÆ÷
+//		äº‹åŠ¡ç®¡ç†å™¨
 		@Nullable
 		private final PlatformTransactionManager transactionManager;
 
-//		ÊÂÎñÊôĞÔ
+//		äº‹åŠ¡å±æ€§
 		@Nullable
 		private final TransactionAttribute transactionAttribute;
 
 		private final String joinpointIdentification;
 
-//		ÊÂÎñ×´Ì¬
-//		Í¨¹ıTransactionManagerµÄgetTransaction·½·¨£¬»ñÈ¡µ±Ç°ÊÂÎñµÄ×´Ì¬¡£
+//		äº‹åŠ¡çŠ¶æ€
+//		é€šè¿‡TransactionManagerçš„getTransactionæ–¹æ³•ï¼Œè·å–å½“å‰äº‹åŠ¡çš„çŠ¶æ€ã€‚
 		@Nullable
 		private TransactionStatus transactionStatus;
 
-//		ÉÏÒ»¸öÊÂÎñĞÅÏ¢oldTransactionInfo£¬REQUIRE_NEW´«²¥¼¶±ğÊ±£¬ÊÂÎñ¹ÒÆğºóÇ°Ò»¸öÊÂÎñµÄÊÂÎñĞÅÏ¢
+//		ä¸Šä¸€ä¸ªäº‹åŠ¡ä¿¡æ¯oldTransactionInfoï¼ŒREQUIRE_NEWä¼ æ’­çº§åˆ«æ—¶ï¼Œäº‹åŠ¡æŒ‚èµ·åå‰ä¸€ä¸ªäº‹åŠ¡çš„äº‹åŠ¡ä¿¡æ¯
 		@Nullable
 		private TransactionInfo oldTransactionInfo;
 

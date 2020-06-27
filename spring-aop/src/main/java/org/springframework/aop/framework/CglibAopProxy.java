@@ -162,13 +162,19 @@ class CglibAopProxy implements AopProxy, Serializable {
 		}
 
 		try {
+//			获取目标对象
 			Class<?> rootClass = this.advised.getTargetClass();
 			Assert.state(rootClass != null, "Target class must be available for creating a CGLIB proxy");
 
+//			将目标对象本身作为基类
 			Class<?> proxySuperClass = rootClass;
+//			检查获取到的目标类是否是通过cglib产生
 			if (ClassUtils.isCglibProxyClass(rootClass)) {
+//				获取目标类的基类
 				proxySuperClass = rootClass.getSuperclass();
+//				获取目标类的接口
 				Class<?>[] additionalInterfaces = rootClass.getInterfaces();
+//				将目标类的接口添加到容器 AdvisedSupport中
 				for (Class<?> additionalInterface : additionalInterfaces) {
 					this.advised.addInterface(additionalInterface);
 				}
@@ -191,6 +197,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
 			enhancer.setStrategy(new ClassLoaderAwareUndeclaredThrowableStrategy(classLoader));
 
+//			回调
 			Callback[] callbacks = getCallbacks(rootClass);
 			Class<?>[] types = new Class<?>[callbacks.length];
 			for (int x = 0; x < types.length; x++) {
@@ -284,11 +291,14 @@ class CglibAopProxy implements AopProxy, Serializable {
 		boolean isFrozen = this.advised.isFrozen();
 		boolean isStatic = this.advised.getTargetSource().isStatic();
 
+//		根据AOP配置创建一个动态通知拦截器，cglib创建的动态代理会自动调用
+//		DynamicAdvisedInterceptor类的intercept方法对目标对象进行拦截处理
 		// Choose an "aop" interceptor (used for AOP calls).
 		Callback aopInterceptor = new DynamicAdvisedInterceptor(this.advised);
 
 		// Choose a "straight to target" interceptor. (used for calls that are
 		// unadvised but can return this). May be required to expose the proxy.
+//		创建目标分发器
 		Callback targetInterceptor;
 		if (exposeProxy) {
 			targetInterceptor = (isStatic ?
@@ -670,8 +680,10 @@ class CglibAopProxy implements AopProxy, Serializable {
 					setProxyContext = true;
 				}
 				// Get as late as possible to minimize the time we "own" the target, in case it comes from a pool...
+//				获取目标对象
 				target = targetSource.getTarget();
 				Class<?> targetClass = (target != null ? target.getClass() : null);
+//				获取AOP的通知链
 				List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 				Object retVal;
 				// Check whether we only have one InvokerInterceptor: that is,
@@ -686,6 +698,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 				}
 				else {
 					// We need to create a method invocation...
+//					通过cglibmethodinvocation来启动配置通知
 					retVal = new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy).proceed();
 				}
 				retVal = processReturnType(proxy, target, method, retVal);

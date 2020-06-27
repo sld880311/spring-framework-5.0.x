@@ -125,6 +125,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	private transient BeanFactory beanFactory;
 
 	/** Whether the advisor chain has already been initialized */
+//	标志通知器链条是否已经完成初始化
 	private boolean advisorChainInitialized = false;
 
 	/** If this is a singleton, the cached singleton proxy instance */
@@ -249,8 +250,10 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	@Override
 	@Nullable
 	public Object getObject() throws BeansException {
+//		初始化aop通知链条
 		initializeAdvisorChain();
 		if (isSingleton()) {
+//			返回单例下的代理对象
 			return getSingletonInstance();
 		}
 		else {
@@ -435,6 +438,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			return;
 		}
 
+//		拦截器列表
 		if (!ObjectUtils.isEmpty(this.interceptorNames)) {
 			if (this.beanFactory == null) {
 				throw new IllegalStateException("No BeanFactory available anymore (probably due to serialization) " +
@@ -453,6 +457,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 					logger.trace("Configuring advisor or advice '" + name + "'");
 				}
 
+//				全局通知器
 				if (name.endsWith(GLOBAL_SUFFIX)) {
 					if (!(this.beanFactory instanceof ListableBeanFactory)) {
 						throw new AopConfigException(

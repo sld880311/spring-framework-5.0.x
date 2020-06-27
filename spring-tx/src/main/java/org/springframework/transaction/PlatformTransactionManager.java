@@ -44,8 +44,8 @@ import org.springframework.lang.Nullable;
  */
 
 /**
- * �����ŵ�ǰ������Դ���ӣ������ṩ�Ը�����Դ�������ύ�ع������ӿڣ�ͬʱʵ����������ز����ķ�����
- * һ������ԴDataSource��Ҫһ�����������
+ * 保存着当前的数据源连接，对外提供对该数据源的事务提交回滚操作接口，同时实现了事务相关操作的方法。
+ * 一个数据源DataSource需要一个事务管理器
  * @author Theodore SUN
  * @since 5.0
  */
