@@ -58,13 +58,22 @@ class ApplicationListenerMethodTransactionalAdapter extends ApplicationListenerM
 	}
 
 
+	/**
+	 * 监听事件
+	 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
+		// 如果当前TransactionManager已经配置开启事务事件监听，
+		// 此时才会注册TransactionSynchronization对象
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
+			// 通过当前事务事件发布的参数，创建一个TransactionSynchronization对象
 			TransactionSynchronization transactionSynchronization = createTransactionSynchronization(event);
+			// 注册TransactionSynchronization对象到TransactionManager中
 			TransactionSynchronizationManager.registerSynchronization(transactionSynchronization);
 		}
 		else if (this.annotation.fallbackExecution()) {
+			// 如果当前TransactionManager没有开启事务事件处理，但是当前事务监听方法中配置了
+			// fallbackExecution属性为true，说明其需要对当前事务事件进行监听，无论其是否有事务
 			if (this.annotation.phase() == TransactionPhase.AFTER_ROLLBACK && logger.isWarnEnabled()) {
 				logger.warn("Processing " + event + " as a fallback execution on AFTER_ROLLBACK phase");
 			}
@@ -72,6 +81,7 @@ class ApplicationListenerMethodTransactionalAdapter extends ApplicationListenerM
 		}
 		else {
 			// No transactional event execution at all
+			// 无事务事件需要处理
 			if (logger.isDebugEnabled()) {
 				logger.debug("No transaction is active - skipping " + event);
 			}
@@ -104,6 +114,7 @@ class ApplicationListenerMethodTransactionalAdapter extends ApplicationListenerM
 			return this.listener.getOrder();
 		}
 
+		// 在目标方法配置的phase属性为BEFORE_COMMIT时，处理before commit事件
 		@Override
 		public void beforeCommit(boolean readOnly) {
 			if (this.phase == TransactionPhase.BEFORE_COMMIT) {
@@ -111,6 +122,7 @@ class ApplicationListenerMethodTransactionalAdapter extends ApplicationListenerM
 			}
 		}
 
+		// after completion事件的处理
 		@Override
 		public void afterCompletion(int status) {
 			if (this.phase == TransactionPhase.AFTER_COMMIT && status == STATUS_COMMITTED) {

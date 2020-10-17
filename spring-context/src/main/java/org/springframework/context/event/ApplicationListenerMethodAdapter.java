@@ -175,10 +175,20 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 	 * match and handling non-null result, if any.
 	 */
 	public void processEvent(ApplicationEvent event) {
+		/**
+		 * 监听事件参数处理：
+		 * 判断TransactionalEventListener中是否配置了value或class属性
+		 * 1.配置：把方法参数转换为该指定类型传给监听方法
+		 * 2.未配置：判断目标方法是ApplicationEvent类型还是PayloadApplicationEvent类型，是则转换为该类型传入
+		 */
 		Object[] args = resolveArguments(event);
+		// 获取TransactionalEventListener中的Condition属性，然后通过
+		// Spring expression language将其与目标类和方法进行匹配
 		if (shouldHandle(event, args)) {
+			// 通过处理得到的参数借助于反射调用事务监听方法
 			Object result = doInvoke(args);
 			if (result != null) {
+				// 对方法的返回值进行处理
 				handleResult(result);
 			}
 			else {
@@ -210,9 +220,18 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 				return new Object[] {payload};
 			}
 		}
+		// 如果参数类型为ApplicationEvent或PayloadApplicationEvent，则直接将其传入事务事件方法
 		return new Object[] {event};
 	}
 
+	/**
+	 * 对事务事件方法的返回值进行处理，
+	 * 这里的处理方式主要是将其作为一个事件继续发布出去，
+	 * 这样就可以在一个统一的位置对事务事件的返回值进行处理
+	 * 1. 数组：对数组中的元素逐一发布
+	 * 2. 集合：遍历集合进行每个元素的发布
+	 * 3. 其他：直接发布
+	 */
 	protected void handleResult(Object result) {
 		if (result.getClass().isArray()) {
 			Object[] events = ObjectUtils.toObjectArray(result);

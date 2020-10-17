@@ -56,6 +56,7 @@ public @interface TransactionalEventListener {
 
 	/**
 	 * Whether the event should be processed if no transaction is running.
+	 * 没有事务时的处理方式
 	 */
 	boolean fallbackExecution() default false;
 
