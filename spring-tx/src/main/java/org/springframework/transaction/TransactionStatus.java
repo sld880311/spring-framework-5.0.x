@@ -37,11 +37,12 @@ import java.io.Flushable;
  * @see org.springframework.transaction.interceptor.TransactionInterceptor#currentTransactionStatus()
  */
 /**
- * ���ã�
-	�жϵ�ǰ�����Ƿ���һ���µ����񣬷�����뵽һ���Ѿ����ڵ������С����񴫲�����REQUIRED��REQUIRE_NEW���õ���
-	��ǰ�����Ƿ�Я������㣬Ƕ�������õ���
-	setRollbackOnly,isRollbackOnly����������ع�ʱ�����������ع����񣬶��Ƕ�����������һ����־λ��
-	�����Ƿ��Ѿ���ɣ��Ѿ��ύ�����Ѿ��ع���
+ * 作用：
+	判断当前事务是否是一个新的事务，否则加入到一个已经存在的事务中。
+    事务传播级别REQUIRED和REQUIRE_NEW有用到。
+	当前事务是否携带保存点，嵌套事务用到。
+	setRollbackOnly,isRollbackOnly，当子事务回滚时，并不真正回滚事务，而是对子事务设置一个标志位。
+	事务是否已经完成，已经提交或者已经回滚。
  * 
  * @author Theodore SUN
  * @since 5.0

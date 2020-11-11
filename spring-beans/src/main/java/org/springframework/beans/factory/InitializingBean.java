@@ -30,6 +30,16 @@ package org.springframework.beans.factory;
  * @see DisposableBean
  * @see org.springframework.beans.factory.config.BeanDefinition#getPropertyValues()
  * @see org.springframework.beans.factory.support.AbstractBeanDefinition#getInitMethodName()
+ * spring bean的初始化顺序
+ * 1. Spring对Bean进行实例化（执行构造函数）
+ * 2. Spring将值和Bean的引用注入进Bean对应的属性中（set赋值）
+ * 3. BeanNameAware接口初始化
+ * 4. BeanFactoryAware接口初始化
+ * 5. ApplicationContextAware接口初始化(ApplicationContextAwareProcessor)
+ * 6. BeanPostProcess：postProcessBeforeInitialization
+ * 7. InitializingBean：afterPropertiesSet，与init-method声明初始化的作用一样
+ * 8. BeanPostProcess：postProcessAfterInitialization
+ * 9. DispostbleBean：destory方，与destory-method属性的作用一样
  */
 public interface InitializingBean {
 

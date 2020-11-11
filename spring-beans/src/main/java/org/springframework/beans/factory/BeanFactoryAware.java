@@ -37,6 +37,7 @@ import org.springframework.beans.BeansException;
  * @see BeanClassLoaderAware
  * @see InitializingBean
  * @see org.springframework.context.ApplicationContextAware
+ * 实现该接口的bean，可以获取容器的引用，然后通过该引用动态获取容器中加载bean的实例
  */
 public interface BeanFactoryAware extends Aware {
 
