@@ -82,6 +82,7 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 			}
 		}
 
+//		判断是否符合切入点
 		if (isEligible(bean, beanName)) {
 			ProxyFactory proxyFactory = prepareProxyFactory(bean, beanName);
 			if (!proxyFactory.isProxyTargetClass()) {
@@ -89,6 +90,7 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 			}
 			proxyFactory.addAdvisor(this.advisor);
 			customizeProxyFactory(proxyFactory);
+//			创建代理
 			return proxyFactory.getProxy(getProxyClassLoader());
 		}
 

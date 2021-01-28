@@ -296,8 +296,13 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
 		// 2.获取事务管理器（PlatformTransactionManager）
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
+		// 获取事务的切入点
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
+		/**
+		 *这里区分不同类型的PlatformTransactionManager 因为他们的调用方式不同
+		 *CallbackPreferringPlatformTransactionManager：以回调函数的方式进行事务的创建和提交
+		 */
 		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
 			/**
@@ -496,9 +501,14 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			};
 		}
 
+		// 封装事务执行的状态信息
 		TransactionStatus status = null;
 		if (txAttr != null) {
 			if (tm != null) {
+				/**
+				这里使用定义好的属性信息创建事务
+				事务创建通过事务管理器来完成，同时返回状态信息
+				*/
 				status = tm.getTransaction(txAttr);
 			}
 			else {
@@ -508,6 +518,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				}
 			}
 		}
+		// 构造一个TransactionInfo对象封装事务的信息，并把这个对象与线程绑定
 		return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
 	}
 

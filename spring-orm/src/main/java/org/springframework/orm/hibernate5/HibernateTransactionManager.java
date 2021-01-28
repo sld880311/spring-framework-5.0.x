@@ -436,6 +436,7 @@ public class HibernateTransactionManager extends AbstractPlatformTransactionMana
 	@Override
 	@SuppressWarnings("deprecation")
 	protected void doBegin(Object transaction, TransactionDefinition definition) {
+		//将事务转换为Hibernage事务组件
 		HibernateTransactionObject txObject = (HibernateTransactionObject) transaction;
 
 		if (txObject.hasConnectionHolder() && !txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
@@ -457,6 +458,7 @@ public class HibernateTransactionManager extends AbstractPlatformTransactionMana
 				if (logger.isDebugEnabled()) {
 					logger.debug("Opened new Session [" + newSession + "] for Hibernate transaction");
 				}
+				// 如果sessionHolder为空，则需要重新创建session
 				txObject.setSession(newSession);
 			}
 
@@ -492,11 +494,13 @@ public class HibernateTransactionManager extends AbstractPlatformTransactionMana
 				}
 			}
 
+			// 如果事务方法定义为只读并且这是一个新的Session  那么设置session的FlushMode 为Never/MANUAL
 			if (definition.isReadOnly() && txObject.isNewSession()) {
 				// Just set to MANUAL in case of a new Session for this transaction.
 				session.setFlushMode(FlushMode.MANUAL);
 			}
 
+			// 如果事务方法不是只读方法并且这也不是一个新的Session，设置FlushMode 为Auto
 			if (!definition.isReadOnly() && !txObject.isNewSession()) {
 				// We need AUTO or COMMIT for a non-read-only transaction.
 				FlushMode flushMode = SessionFactoryUtils.getFlushMode(session);

@@ -339,10 +339,16 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 */
 	@Override
 	public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition) throws TransactionException {
-		// 从当前的transactionManager获取DataSource对象
-		// 然后以该DataSource对象为Key，
-		// 去一个ThreadLocal变量中的map中获取该DataSource的连接
-		// 然后设置到DataSourceTransactionObject中返回。
+		/**
+		 * 1. 从当前的transactionManager获取DataSource对象
+		 * 2. 以该DataSource对象为Key，去一个ThreadLocal变量中的map中获取该DataSource的连接
+		 * 3. 设置到DataSourceTransactionObject中返回
+		 *
+		 * DataSourceTransactionObject txObject = new DataSourceTransactionObject();
+		 * txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		 * ConnectionHolder conHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		 * txObject.setConnectionHolder(conHolder, false);
+		 */
 		Object transaction = doGetTransaction();
 
 		// Cache debug flag to avoid repeated checks.
@@ -352,8 +358,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			// Use defaults if no transaction definition given.
 			definition = new DefaultTransactionDefinition();
 		}
-		// 如果当前线程已经在一个事务中了，则需要根据事务的传播级别
-		// 来决定如何处理并获取事务状态对象
+		// 如果当前线程已经在一个事务中了，则需要根据事务的传播级别来决定如何处理并获取事务状态对象
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
 			return handleExistingTransaction(definition, transaction, debugEnabled);

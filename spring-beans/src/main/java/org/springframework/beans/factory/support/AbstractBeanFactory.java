@@ -245,7 +245,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
-		// 检查下是不是已经创建过了
+		/*
+		 * 检查缓存或者实例工厂中是否有对应的单例
+		 * 在创建单例bean的时候会存在依赖注入的情况，而在创建依赖的时候为了避免循环依赖
+		 * Spring创建bean的原则是不等bean创建完成就会将创建bean的ObjectFactory提前曝光（将对应的ObjectFactory加入到缓存）
+		 * 一旦下一个bean创建需要依赖上一个bean，则直接使用ObjectFactory对象
+		 */
 		Object sharedInstance = getSingleton(beanName);
 		// 这里说下 args 呗，虽然看上去一点不重要。前面我们一路进来的时候都是 getBean(beanName)，
 		// 所以 args 传参其实是 null 的，但是如果 args 不为空的时候，
@@ -319,7 +324,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 									"Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
 						}
 						// 检查是不是有循环依赖，这里的循环依赖和我们前面说的循环依赖又不一样，
-						// 这里肯定是不允许出现的，不然要乱套了，读者想一下就知道了
+						// 这里肯定是不允许出现的，不然要乱套了
 						registerDependentBean(dep, beanName);
 						try {
 							getBean(dep);
