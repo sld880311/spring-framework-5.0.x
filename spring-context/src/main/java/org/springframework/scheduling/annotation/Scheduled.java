@@ -48,6 +48,14 @@ import java.lang.annotation.Target;
  * @see EnableScheduling
  * @see ScheduledAnnotationBeanPostProcessor
  * @see Schedules
+ * 1、fixedRate配置了上一次任务的开始时间到下一次任务的开始时间的间隔，每次任务都会执行；
+ * 2、fixedDelay配置了上一次任务的结束时间到下一次任务的开始时间的间隔，每次任务都会执行；
+ * 3、cron表达式配置了在哪一刻执行任务，会在配置的任务开始时间判断任务是否可以执行，如果能则执行，不能则会跳过本次执行；
+ * 4、如果是强调任务间隔的定时任务，建议使用fixedRate和fixedDelay，如果是强调任务在某时某分某刻执行的定时任务，建议使用cron表达式。
+ * @Scheduled修饰的某个方法如果同时配置了
+ * 		cron、fixedDelay|fixedDelayString和fixedRate|fixedRateString属性，
+ * 		意味着此方法同时封装为三种任务CronTask、FixedDelayTask和FixedRateTask
+ * 	https://www.cnblogs.com/throwable/p/12616945.html
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

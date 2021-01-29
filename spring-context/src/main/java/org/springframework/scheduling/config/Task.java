@@ -25,6 +25,13 @@ import org.springframework.util.Assert;
  * @author Chris Beams
  * @author Juergen Hoeller
  * @since 3.2
+ * 分类：
+ * 1.Cron表达式：
+ * 		支持通过Cron表达式配置执行的周期，对应org.springframework.scheduling.config.CronTask
+ * 2.固定延迟间隔任务：
+ * 		 上一轮执行完毕后间隔固定周期再次执行，对于org.springframework.scheduling.config.FixedDelayTask
+ * 3.固定频率任务：
+ * 		 基于固定的间隔时间执行，不会理会上一轮是否执行完毕本轮都会执行，对应org.springframework.scheduling.config.FixedRateTask
  */
 public class Task {
 

@@ -338,25 +338,35 @@ public class ScheduledTaskRegistrar implements ScheduledTaskHolder, Initializing
 	 */
 	@SuppressWarnings("deprecation")
 	protected void scheduleTasks() {
+		// 这里注意一点，如果找不到任务调度器实例，那么会用单个线程调度所有任务
+		// 如果没有配置TaskScheduler或者ScheduledExecutorService类型的Bean，
+		// 		那么调度模块只会创建一个线程去调度所有装载完毕的任务
+		// SchedulingConfigurer是调度模块提供给使用的进行扩展的钩子接口，
+		// 		用于在激活所有调度任务之前回调ScheduledTaskRegistrar实例，
+		// 		只要拿到ScheduledTaskRegistrar实例，我们就可以使用它注册和装载新的Task。
 		if (this.taskScheduler == null) {
 			this.localExecutor = Executors.newSingleThreadScheduledExecutor();
 			this.taskScheduler = new ConcurrentTaskScheduler(this.localExecutor);
 		}
+		// 调度所有装载完毕的自定义触发器的任务实例
 		if (this.triggerTasks != null) {
 			for (TriggerTask task : this.triggerTasks) {
 				addScheduledTask(scheduleTriggerTask(task));
 			}
 		}
+		// 调度所有装载完毕的CronTask
 		if (this.cronTasks != null) {
 			for (CronTask task : this.cronTasks) {
 				addScheduledTask(scheduleCronTask(task));
 			}
 		}
+		// 调度所有装载完毕的FixedRateTask
 		if (this.fixedRateTasks != null) {
 			for (IntervalTask task : this.fixedRateTasks) {
 				addScheduledTask(scheduleFixedRateTask(task));
 			}
 		}
+		// 调度所有装载完毕的FixedDelayTask
 		if (this.fixedDelayTasks != null) {
 			for (IntervalTask task : this.fixedDelayTasks) {
 				addScheduledTask(scheduleFixedDelayTask(task));

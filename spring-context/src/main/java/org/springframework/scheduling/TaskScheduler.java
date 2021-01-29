@@ -46,6 +46,12 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.core.task.TaskExecutor
  * @see java.util.concurrent.ScheduledExecutorService
  * @see org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+ * ThreadPoolTaskScheduler：基于线程池实现的任务执行器，底层依赖 ScheduledThreadPoolExecutor
+ * ConcurrentTaskScheduler：TaskScheduler 接口和 ScheduledExecutorService 接口适配器，
+ * 		如果定义了一个ScheduledThreadPoolExecutor类型的bean，则任务执行器会适配为 ConcurrentTaskScheduler 。
+ * DefaultManagedTaskScheduler：使用jndi配置此调度执行器，一般很少用到，底层依赖ScheduledThreadPoolExecutor
+ *
+ * 都需要依赖ScheduledThreadPoolExecutor
  */
 public interface TaskScheduler {
 
@@ -64,6 +70,7 @@ public interface TaskScheduler {
 	 * @throws org.springframework.core.task.TaskRejectedException if the given task was not accepted
 	 * for internal reasons (e.g. a pool overload handling policy or a pool shutdown in progress)
 	 * @see org.springframework.scheduling.support.CronTrigger
+	 * 调度一个任务，通过触发器实例指定触发时间周期
 	 */
 	@Nullable
 	ScheduledFuture<?> schedule(Runnable task, Trigger trigger);
@@ -95,6 +102,7 @@ public interface TaskScheduler {
 	 * @return a {@link ScheduledFuture} representing pending completion of the task
 	 * @throws org.springframework.core.task.TaskRejectedException if the given task was not accepted
 	 * for internal reasons (e.g. a pool overload handling policy or a pool shutdown in progress)
+	 * 指定起始时间调度一个任务，单次调用
 	 */
 	ScheduledFuture<?> schedule(Runnable task, Date startTime);
 
@@ -129,6 +137,7 @@ public interface TaskScheduler {
 	 * @return a {@link ScheduledFuture} representing pending completion of the task
 	 * @throws org.springframework.core.task.TaskRejectedException if  the given task was not accepted
 	 * for internal reasons (e.g. a pool overload handling policy or a pool shutdown in progress)
+	 * 指定起始时间和固定频率调度一个任务，period的单位是毫秒
 	 */
 	ScheduledFuture<?> scheduleAtFixedRate(Runnable task, Date startTime, long period);
 
@@ -159,6 +168,7 @@ public interface TaskScheduler {
 	 * @return a {@link ScheduledFuture} representing pending completion of the task
 	 * @throws org.springframework.core.task.TaskRejectedException if the given task was not accepted
 	 * for internal reasons (e.g. a pool overload handling policy or a pool shutdown in progress)
+	 * 指定固定频率调度一个任务，period的单位是毫秒
 	 */
 	ScheduledFuture<?> scheduleAtFixedRate(Runnable task, long period);
 
@@ -196,6 +206,7 @@ public interface TaskScheduler {
 	 * @return a {@link ScheduledFuture} representing pending completion of the task
 	 * @throws org.springframework.core.task.TaskRejectedException if the given task was not accepted
 	 * for internal reasons (e.g. a pool overload handling policy or a pool shutdown in progress)
+	 * 指定起始时间和固定延迟间隔调度一个任务，delay的单位是毫秒
 	 */
 	ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, Date startTime, long delay);
 
@@ -227,6 +238,7 @@ public interface TaskScheduler {
 	 * @return a {@link ScheduledFuture} representing pending completion of the task
 	 * @throws org.springframework.core.task.TaskRejectedException if the given task was not accepted
 	 * for internal reasons (e.g. a pool overload handling policy or a pool shutdown in progress)
+	 * 指定固定延迟间隔调度一个任务，delay的单位是毫秒
 	 */
 	ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, long delay);
 
